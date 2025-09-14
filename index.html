@@ -15,7 +15,10 @@
     color:var(--fg);
     font-family:system-ui,Segoe UI,Roboto,sans-serif;
   }
-  header{position:sticky;top:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);border-bottom:1px solid #e2e8f0;z-index:5}
+  header{
+    background:#fff;
+    border-bottom:1px solid #e2e8f0;
+  }
   .wrap{max-width:1080px;margin:0 auto;padding:18px 20px}
   h1{margin:0 0 6px 0}
   .sub{color:var(--muted);margin:0 0 10px 0}
@@ -42,14 +45,13 @@
 <header>
   <div class="wrap">
     <h1>Matific — Evaluación de Calidad</h1>
-    <p class="sub">Botón + visor del PDF de la evaluación y espacio de <strong>conclusiones</strong> por modelo (McCall, Boehm, FURPS).</p>
+    <p class="sub">Evaluación de Matific mediante los modelos McCall, Boehm y FURPS.</p>
     <div class="toolbar">
       <button class="btn" id="btnExport">Exportar conclusiones (.json)</button>
       <label class="btn">
         Importar conclusiones
         <input id="importJson" type="file" accept="application/json" style="display:none">
       </label>
-      <span class="pill muted">Sugerencia: sube <code>mccall.pdf</code>, <code>boehm.pdf</code> y <code>furps.pdf</code> al repositorio.</span>
     </div>
   </div>
 </header>
