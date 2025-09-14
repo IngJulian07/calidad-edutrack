@@ -1,11 +1,11 @@
-v<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Evaluación de Calidad de Software — EDUTrack (McCall, Boehm, FURPS)</title>
+  <title>Evaluación de Calidad de Software — (McCall, Boehm, FURPS)</title>
   <style>
-    :root{--fg:#0f172a;--muted:#475569;--bg:#f8fafc;--card:#ffffff;--brand:#2563eb;--ok:#16a34a;--warn:#f59e0b;--bad:#dc2626}
+    :root{--fg:#0f172a;--muted:#475569;--bg:#f8fafc;--card:#ffffff;--brand:#2563eb;--ok:#16a34a;--mid:#f59e0b;--bad:#dc2626}
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;scroll-behavior:smooth}
     header{position:sticky;top:0;background:linear-gradient(180deg,#ffffff,rgba(255,255,255,.9));backdrop-filter:saturate(160%) blur(6px);border-bottom:1px solid #e2e8f0;z-index:10}
@@ -18,8 +18,7 @@ v<!DOCTYPE html>
     section{background:var(--card);border:1px solid #e2e8f0;border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 1px 0 rgba(2,6,23,.04)}
     h2{margin-top:0}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .col-6{grid-column:span 6}
-    .col-12{grid-column:span 12}
+    .col-6{grid-column:span 6}.col-12{grid-column:span 12}
     @media (max-width:900px){.col-6{grid-column:span 12}}
     .card{background:var(--card);border:1px solid #e2e8f0;border-radius:14px;padding:14px}
     .muted{color:var(--muted)}
@@ -28,164 +27,276 @@ v<!DOCTYPE html>
     th,td{border-bottom:1px solid #e2e8f0;padding:10px;text-align:left;vertical-align:top}
     th{background:#f8fafc}
     tfoot td{font-weight:700}
-    select, input[type="number"]{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
+    select,input[type="number"]{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
     .toolbar{display:flex;gap:8px;flex-wrap:wrap}
     .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
     .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
     .score{font-size:28px;font-weight:800}
     .badge{padding:4px 8px;border-radius:8px;font-weight:700}
-    .ok{background:#dcfce7;color:#166534}
-    .mid{background:#fef3c7;color:#92400e}
-    .bad{background:#fee2e2;color:#991b1b}
+    .ok{background:#dcfce7;color:#166534}.mid{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}
     .model-box{display:flex;justify-content:space-between;align-items:center;gap:12px}
     .legend{font-size:14px;display:flex;gap:12px;flex-wrap:wrap}
     .legend span{display:inline-flex;align-items:center;gap:6px}
     .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px}
-    footer{color:var(--muted);padding:24px 0}
-    .kbd{font-variant:all-small-caps;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;padding:0 6px;background:#fff}
     .note{background:#f8fafc;border:1px dashed #cbd5e1;padding:10px;border-radius:10px}
     .sep{height:1px;background:#e2e8f0;margin:10px 0}
-    @media print { header, nav, .toolbar { display:none } body{background:#fff} section{box-shadow:none;border-color:#e5e7eb} }
-    /* Offset para que el header sticky no tape el título */
+    footer{color:var(--muted);padding:24px 0}
+    .kbd{font-variant:all-small-caps;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;padding:0 6px;background:#fff}
     .anchor-offset{position:relative;top:-76px;visibility:hidden}
+    @media print { header, nav, .toolbar { display:none } body{background:#fff} section{box-shadow:none;border-color:#e5e7eb} }
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>Evaluación de Calidad de Software — <span class="pill">Caso: EDUTrack</span></h1>
-      <p class="sub">Aplicación de modelos McCall, Boehm y FURPS a un prototipo de plataforma educativa en línea (gestión de cursos, evaluaciones y analíticas).</p>
-      <nav>
-        <a href="#descripcion">Descripción</a>
-        <a href="#ficha-red">Ficha del RED</a>
-        <a href="#modelos">Modelos</a>
-        <a href="#mccall">Plantilla McCall</a>
-        <a href="#boehm">Plantilla Boehm</a>
-        <a href="#furps">Plantilla FURPS</a>
-        <a href="#resultados">Resultados</a>
-        <a href="#conclusiones">Conclusiones</a>
-      </nav>
+<header>
+  <div class="wrap">
+    <h1>Evaluación de Calidad de Software — <span class="pill">Plantillas oficiales</span></h1>
+    <p class="sub">Aplicación de McCall, Boehm y FURPS con escala <strong>1–4</strong> y ponderaciones sobre <strong>100 puntos</strong> por modelo.</p>
+    <nav>
+      <a href="#descripcion">Descripción</a>
+      <a href="#ficha-red">Ficha del RED</a>
+      <a href="#mccall">McCall</a>
+      <a href="#boehm">Boehm</a>
+      <a href="#furps">FURPS</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#conclusiones">Conclusiones</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span id="descripcion" class="anchor-offset"></span>
+  <section>
+    <h2>1) Descripción y escala</h2>
+    <div class="grid">
+      <div class="col-6">
+        <div class="card">
+          <p>Evaluar un <strong>RED / App / Sitio</strong> siguiendo los cuestionarios del profesor. Escala de respuesta:</p>
+          <ul class="muted"><li><b>4</b> Excelente</li><li><b>3</b> Bueno</li><li><b>2</b> Regular</li><li><b>1</b> Malo</li></ul>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="note">
+          <strong>Fórmula</strong>
+          <div class="sep"></div>
+          <p class="mono">Puntaje de fila = (valor / 4) × Peso(pts).<br/>Puntaje del modelo = suma de filas (0–100).</p>
+        </div>
+      </div>
     </div>
-  </header>
+  </section>
 
-  <main class="wrap">
-    <!-- Secciones -->
-    <span id="descripcion" class="anchor-offset"></span>
-    <section>
-      <h2>1) Selección del sistema a evaluar</h2>
-      <p>Se evaluará un <strong>Recurso Educativo Digital (RED)</strong>, aplicación o sitio web. La evaluación usará <strong>escala 1–4</strong> (Excelente=4, Bueno=3, Regular=2, Malo=1) y ponderaciones por modelo en escala 0–100.</p>
-    </section>
+  <span id="ficha-red" class="anchor-offset"></span>
+  <section>
+    <h2>2) Ficha del RED / Software</h2>
+    <div class="card">
+      <div class="grid">
+        <div class="col-6">
+          <label class="muted">Nombre</label>
+          <input placeholder="Ej.: Khan Academy – Geometría" />
+        </div>
+        <div class="col-6">
+          <label class="muted">URL / Repositorio</label>
+          <input placeholder="https://…" />
+        </div>
+        <div class="col-12">
+          <label class="muted">Descripción</label>
+          <textarea placeholder="Resumen funcional y técnico" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></textarea>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <span id="ficha-red" class="anchor-offset"></span>
-    <section>
-      <h2>2) Ficha del RED / Software</h2>
-      <input placeholder="Nombre del RED" />
-      <input placeholder="URL o repositorio" />
-    </section>
+  <!-- McCall -->
+  <span id="mccall" class="anchor-offset"></span>
+  <section>
+    <div class="model-box">
+      <h2>3) Plantilla McCall</h2>
+      <div class="legend"><span><b>1</b>Malo</span><span><b>2</b>Regular</span><span><b>3</b>Bueno</span><span><b>4</b>Excelente</span></div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" onclick="fillDefaults('mccall')">Rellenar ejemplo</button>
+      <button class="btn" onclick="clearModel('mccall')">Limpiar</button>
+    </div>
+    <div class="sep"></div>
+    <table>
+      <thead>
+        <tr><th>Factor (peso 10 c/u)</th><th>Pregunta</th><th style="width:110px">Peso</th><th style="width:140px">Puntaje (1–4)</th></tr>
+      </thead>
+      <tbody id="tbl-mccall">
+        <!-- Operación -->
+        <tr><td><strong>Corrección</strong></td><td>¿Las funciones implementadas reflejan los requisitos y objetivos educativos establecidos?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Confiabilidad</strong></td><td>¿La aplicación se comporta de forma estable y recupera ante errores?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Usabilidad</strong></td><td>¿La interfaz es consistente, accesible y fácil de aprender para el usuario objetivo?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Integridad</strong></td><td>¿Existen controles de acceso por rol y protección de datos personales?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <!-- Transición -->
+        <tr><td><strong>Portabilidad</strong></td><td>¿Funciona correctamente en diferentes navegadores/sistemas sin cambios?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Reusabilidad</strong></td><td>¿Se reutilizan componentes (tablas, formularios) reduciendo duplicación?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Interoperabilidad</strong></td><td>¿Integra o expone APIs con estándares comunes (SSO, exportación/importación)?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <!-- Revisión/Mantenimiento -->
+        <tr><td><strong>Mantenibilidad</strong></td><td>¿El código está modularizado, documentado y con pruebas que faciliten cambios?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Flexibilidad</strong></td><td>¿Se pueden agregar nuevas funciones con mínimo impacto?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Facilidad de Prueba</strong></td><td>¿Existen datos semilla y puntos claros para pruebas (unitarias/E2E)?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2">Puntaje total McCall (0–100)</td><td colspan="2" id="score-mccall" class="score">—</td></tr></tfoot>
+    </table>
+  </section>
 
-    <span id="modelos" class="anchor-offset"></span>
-    <section>
-      <h2>3) Modelos de calidad</h2>
-      <p>McCall, Boehm y FURPS.</p>
-    </section>
+  <!-- Boehm -->
+  <span id="boehm" class="anchor-offset"></span>
+  <section>
+    <div class="model-box">
+      <h2>4) Plantilla Boehm</h2>
+      <div class="legend"><span><b>1</b>Malo</span><span><b>2</b>Regular</span><span><b>3</b>Bueno</span><span><b>4</b>Excelente</span></div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" onclick="fillDefaults('boehm')">Rellenar ejemplo</button>
+      <button class="btn" onclick="clearModel('boehm')">Limpiar</button>
+    </div>
+    <div class="sep"></div>
+    <table>
+      <thead><tr><th>Característica</th><th>Pregunta</th><th style="width:110px">Peso</th><th style="width:140px">Puntaje (1–4)</th></tr></thead>
+      <tbody id="tbl-boehm">
+        <tr><td><strong>Portabilidad</strong></td><td>Independencia de dispositivo y auto-contenimiento del software.</td><td><input type="number" value="10" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Utilidad: Fiabilidad / Precisión / Completitud / Consistencia</strong></td><td>Resultados correctos, completos y consistentes con el currículo/objetivos.</td><td><input type="number" value="40" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Utilidad: Accesibilidad / Interactividad / Eficiencia</strong></td><td>Uso multi-dispositivo, facilidad de acceso y tiempos de respuesta.</td><td><input type="number" value="30" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Mantenibilidad</strong></td><td>Testabilidad, auto-descripción, estructuración, entendibilidad, concisión, legibilidad, modificabilidad, escalabilidad.</td><td><input type="number" value="20" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2">Puntaje total Boehm (0–100)</td><td colspan="2" id="score-boehm" class="score">—</td></tr></tfoot>
+    </table>
+  </section>
 
-    <span id="mccall" class="anchor-offset"></span>
-    <section>
-      <h2>4) Plantilla McCall</h2>
-      <button onclick="fillDefaults('mccall')">Rellenar ejemplo</button>
-      <button onclick="clearModel('mccall')">Limpiar</button>
-      <table>
-        <thead><tr><th>Factor</th><th>Peso</th><th>Puntaje (1–4)</th></tr></thead>
-        <tbody id="tbl-mccall">
-          <tr><td>Corrección</td><td><input type="number" value="10" data-model="mccall" data-weight></td>
-          <td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option></select></td></tr>
-        </tbody>
-        <tfoot><tr><td colspan="3" id="score-mccall">—</td></tr></tfoot>
-      </table>
-    </section>
+  <!-- FURPS -->
+  <span id="furps" class="anchor-offset"></span>
+  <section>
+    <div class="model-box">
+      <h2>5) Plantilla FURPS</h2>
+      <div class="legend"><span><b>1</b>Malo</span><span><b>2</b>Regular</span><span><b>3</b>Bueno</span><span><b>4</b>Excelente</span></div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" onclick="fillDefaults('furps')">Rellenar ejemplo</button>
+      <button class="btn" onclick="clearModel('furps')">Limpiar</button>
+    </div>
+    <div class="sep"></div>
+    <table>
+      <thead><tr><th>Dimensión</th><th>Pregunta</th><th style="width:110px">Peso</th><th style="width:140px">Puntaje (1–4)</th></tr></thead>
+      <tbody id="tbl-furps">
+        <tr><td><strong>Funcionalidad</strong></td><td>Características/capacidades, generalidad de funciones y seguridad.</td><td><input type="number" value="30" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Usabilidad</strong></td><td>Facilidad de uso, instalación, configuración, compatibilidad.</td><td><input type="number" value="20" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Confiabilidad</strong></td><td>Frecuencia/severidad de fallos, exactitud y predictibilidad.</td><td><input type="number" value="15" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Rendimiento</strong></td><td>Velocidad de procesamiento y tiempos de respuesta bajo carga.</td><td><input type="number" value="20" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+        <tr><td><strong>Soporte</strong></td><td>Mantenibilidad, configurabilidad, monitoreo y soporte técnico.</td><td><input type="number" value="15" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2">Puntaje total FURPS (0–100)</td><td colspan="2" id="score-furps" class="score">—</td></tr></tfoot>
+    </table>
+  </section>
 
-    <span id="boehm" class="anchor-offset"></span>
-    <section>
-      <h2>5) Plantilla Boehm</h2>
-      <button onclick="fillDefaults('boehm')">Rellenar ejemplo</button>
-      <button onclick="clearModel('boehm')">Limpiar</button>
-      <table>
-        <thead><tr><th>Factor</th><th>Peso</th><th>Puntaje (1–4)</th></tr></thead>
-        <tbody id="tbl-boehm">
-          <tr><td>Portabilidad</td><td><input type="number" value="10" data-model="boehm" data-weight></td>
-          <td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option></select></td></tr>
-        </tbody>
-        <tfoot><tr><td colspan="3" id="score-boehm">—</td></tr></tfoot>
-      </table>
-    </section>
+  <!-- Resultados -->
+  <span id="resultados" class="anchor-offset"></span>
+  <section>
+    <h2>6) Resultados</h2>
+    <div class="grid">
+      <div class="col-6">
+        <div class="card">
+          <p class="muted">Totales por modelo (0–100)</p>
+          <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+            <div><strong>McCall</strong><div id="out-mccall" class="score">—</div></div>
+            <div><strong>Boehm</strong><div id="out-boehm" class="score">—</div></div>
+            <div><strong>FURPS</strong><div id="out-furps" class="score">—</div></div>
+            <div><strong>Promedio Global</strong><div id="out-global" class="score">—</div></div>
+          </div>
+          <div class="sep"></div>
+          <div id="badge-global" class="badge mid">Pendiente</div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card">
+          <h3>Interpretación</h3>
+          <p id="interp" class="muted">Diligencia cada modelo o usa “Rellenar ejemplo” y luego pulsa <span class="kbd">Calcular resultados</span>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="toolbar" style="margin-top:10px">
+      <button class="btn primary" onclick="calculateAll()">Calcular resultados</button>
+      <button class="btn" onclick="window.print()">Guardar como PDF</button>
+    </div>
+  </section>
 
-    <span id="furps" class="anchor-offset"></span>
-    <section>
-      <h2>6) Plantilla FURPS</h2>
-      <button onclick="fillDefaults('furps')">Rellenar ejemplo</button>
-      <button onclick="clearModel('furps')">Limpiar</button>
-      <table>
-        <thead><tr><th>Factor</th><th>Peso</th><th>Puntaje (1–4)</th></tr></thead>
-        <tbody id="tbl-furps">
-          <tr><td>Funcionalidad</td><td><input type="number" value="30" data-model="furps" data-weight></td>
-          <td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option></select></td></tr>
-        </tbody>
-        <tfoot><tr><td colspan="3" id="score-furps">—</td></tr></tfoot>
-      </table>
-    </section>
+  <span id="conclusiones" class="anchor-offset"></span>
+  <section>
+    <h2>7) Conclusiones</h2>
+    <ul>
+      <li><strong>Adecuación general:</strong> Si el promedio ≥ 80%, apto para despliegue/piloto con mejoras puntuales.</li>
+      <li><strong>Riesgos:</strong> Priorizar ítems con puntaje bajo (≤ 60%).</li>
+      <li><strong>Mejoras sugeridas:</strong> automatizar pruebas, fortalecer seguridad, y monitoreo de rendimiento.</li>
+    </ul>
+  </section>
+</main>
 
-    <span id="resultados" class="anchor-offset"></span>
-    <section>
-      <h2>7) Resultados</h2>
-      <p>McCall: <span id="out-mccall">—</span></p>
-      <p>Boehm: <span id="out-boehm">—</span></p>
-      <p>FURPS: <span id="out-furps">—</span></p>
-      <p>Global: <span id="out-global">—</span></p>
-    </section>
-
-    <span id="conclusiones" class="anchor-offset"></span>
-    <section>
-      <h2>8) Conclusiones</h2>
-      <p>Interpretación general de resultados.</p>
-    </section>
-  </main>
+<footer class="wrap">
+  <div class="muted small">Universidad de La Guajira — Ingeniería de Sistemas — Evaluación de Calidad (McCall, Boehm, FURPS).</div>
+</footer>
 
 <script>
+  // ======= Cálculo: suma de Peso*(valor/4) → 0–100 =======
   function computeModelScore(model){
-    const weights=document.querySelectorAll(`[data-model="${model}"][data-weight]`);
-    const scores=document.querySelectorAll(`[data-model="${model}"][data-score]`);
+    const weights = Array.from(document.querySelectorAll(`[data-model="${model}"][data-weight]`));
+    const scores  = Array.from(document.querySelectorAll(`[data-model="${model}"][data-score]`));
     let acc=0;
-    for(let i=0;i<weights.length;i++){
-      const w=parseFloat(weights[i].value||0);
-      const s=parseFloat(scores[i].value||0);
-      if(!isNaN(w)&&!isNaN(s)) acc+=w*(s/4);
+    const N = Math.min(weights.length, scores.length);
+    for(let i=0;i<N;i++){
+      const w = parseFloat(weights[i].value||'0');
+      const s = parseFloat(scores[i].value||'0');
+      if(!isNaN(w) && !isNaN(s)) acc += w*(s/4);
     }
     return acc;
   }
+  function fmt(v){ return isNaN(v)? '—' : (Math.round(v*10)/10).toFixed(1) }
+  function labelForPct(v){
+    if(isNaN(v)) return {text:'Pendiente', cls:'mid'}
+    if(v>=90) return {text:'Excelente', cls:'ok'}
+    if(v>=75) return {text:'Bueno', cls:'ok'}
+    if(v>=60) return {text:'Regular', cls:'mid'}
+    return {text:'Malo', cls:'bad'}
+  }
   function calculateAll(){
-    const m=computeModelScore('mccall');
-    const b=computeModelScore('boehm');
-    const f=computeModelScore('furps');
-    document.getElementById('score-mccall').textContent=m;
-    document.getElementById('score-boehm').textContent=b;
-    document.getElementById('score-furps').textContent=f;
-    document.getElementById('out-mccall').textContent=m;
-    document.getElementById('out-boehm').textContent=b;
-    document.getElementById('out-furps').textContent=f;
-    const vals=[m,b,f].filter(v=>!isNaN(v));
-    const g=vals.length?vals.reduce((a,c)=>a+c,0)/vals.length:NaN;
-    document.getElementById('out-global').textContent=g;
+    const m = computeModelScore('mccall');
+    const b = computeModelScore('boehm');
+    const f = computeModelScore('furps');
+    document.getElementById('score-mccall').textContent = fmt(m);
+    document.getElementById('score-boehm').textContent  = fmt(b);
+    document.getElementById('score-furps').textContent  = fmt(f);
+    document.getElementById('out-mccall').textContent   = fmt(m);
+    document.getElementById('out-boehm').textContent    = fmt(b);
+    document.getElementById('out-furps').textContent    = fmt(f);
+    const vals = [m,b,f].filter(v=>!isNaN(v));
+    const g = vals.length? vals.reduce((a,c)=>a+c,0)/vals.length : NaN;
+    document.getElementById('out-global').textContent = fmt(g);
+    const badge = document.getElementById('badge-global');
+    const lab = labelForPct(g);
+    badge.textContent = isNaN(g)? 'Pendiente' : `${lab.text} (${fmt(g)}%)`;
+    badge.className = 'badge ' + lab.cls;
+    const interp = document.getElementById('interp');
+    if(!isNaN(g)){
+      let msg = 'Diagnóstico global: ' + lab.text + ' ('+fmt(g)+'%). ';
+      if(g>=80){ msg += 'Apto para despliegue/piloto con mejoras puntuales.' }
+      else if(g>=60){ msg += 'Requiere plan de mejoras antes de uso extensivo.' }
+      else { msg += 'No apto sin remediación significativa.' }
+      interp.textContent = msg;
+      interp.classList.remove('muted');
+    }
   }
   function clearModel(model){
     document.querySelectorAll(`[data-model="${model}"][data-score]`).forEach(s=>s.value='');
     calculateAll();
   }
   function fillDefaults(model){
-    const defaults={mccall:[4],boehm:[4],furps:[4]};
-    let i=0;
+    const defaults = {
+      mccall:[4,4,4,4,4,4,4,3,3,3], // ejemplo
+      boehm:[4,4,4,4],
+      furps:[4,4,4,3,3]
+    };
+    const vals = defaults[model]; let i=0;
     document.querySelectorAll(`[data-model="${model}"][data-score]`).forEach(s=>{
-      if(defaults[model]&&defaults[model][i]){s.value=defaults[model][i]}
-      i++;
+      if(vals && typeof vals[i] !== 'undefined'){ s.value = String(vals[i]); } i++;
     });
     calculateAll();
   }
