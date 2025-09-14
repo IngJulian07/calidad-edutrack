@@ -1,309 +1,251 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Evaluación de Calidad de Software — (McCall, Boehm, FURPS)</title>
-  <style>
-    :root{--fg:#0f172a;--muted:#475569;--bg:#f8fafc;--card:#ffffff;--brand:#2563eb;--ok:#16a34a;--mid:#f59e0b;--bad:#dc2626}
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;scroll-behavior:smooth}
-    header{position:sticky;top:0;background:linear-gradient(180deg,#ffffff,rgba(255,255,255,.9));backdrop-filter:saturate(160%) blur(6px);border-bottom:1px solid #e2e8f0;z-index:10}
-    .wrap{max-width:1100px;margin:0 auto;padding:24px}
-    h1{font-size:clamp(24px,3.2vw,36px);margin:0 0 6px 0}
-    .sub{color:var(--muted);margin:0 0 10px 0}
-    nav{display:flex;gap:12px;flex-wrap:wrap}
-    nav a{padding:8px 12px;border-radius:999px;background:#eef2ff;color:#1e40af;text-decoration:none;font-weight:600;border:1px solid #e0e7ff}
-    main{padding:24px 0}
-    section{background:var(--card);border:1px solid #e2e8f0;border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 1px 0 rgba(2,6,23,.04)}
-    h2{margin-top:0}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .col-6{grid-column:span 6}.col-12{grid-column:span 12}
-    @media (max-width:900px){.col-6{grid-column:span 12}}
-    .card{background:var(--card);border:1px solid #e2e8f0;border-radius:14px;padding:14px}
-    .muted{color:var(--muted)}
-    .pill{font-size:12px;border:1px solid #e2e8f0;border-radius:999px;padding:2px 8px;background:#f1f5f9}
-    table{width:100%;border-collapse:collapse}
-    th,td{border-bottom:1px solid #e2e8f0;padding:10px;text-align:left;vertical-align:top}
-    th{background:#f8fafc}
-    tfoot td{font-weight:700}
-    select,input[type="number"]{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
-    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-    .score{font-size:28px;font-weight:800}
-    .badge{padding:4px 8px;border-radius:8px;font-weight:700}
-    .ok{background:#dcfce7;color:#166534}.mid{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}
-    .model-box{display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .legend{font-size:14px;display:flex;gap:12px;flex-wrap:wrap}
-    .legend span{display:inline-flex;align-items:center;gap:6px}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px}
-    .note{background:#f8fafc;border:1px dashed #cbd5e1;padding:10px;border-radius:10px}
-    .sep{height:1px;background:#e2e8f0;margin:10px 0}
-    footer{color:var(--muted);padding:24px 0}
-    .kbd{font-variant:all-small-caps;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;padding:0 6px;background:#fff}
-    .anchor-offset{position:relative;top:-76px;visibility:hidden}
-    @media print { header, nav, .toolbar { display:none } body{background:#fff} section{box-shadow:none;border-color:#e5e7eb} }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Matific – Evaluación (McCall, Boehm, FURPS)</title>
+<style>
+  :root{--fg:#0f172a;--muted:#475569;--bg:#f8fafc;--card:#ffffff;--brand:#2563eb}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,sans-serif}
+  header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e2e8f0;z-index:5}
+  .wrap{max-width:1080px;margin:0 auto;padding:18px 20px}
+  h1{margin:0 0 6px 0}
+  .sub{color:var(--muted);margin:0 0 10px 0}
+  section{background:var(--card);border:1px solid #e2e8f0;border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 1px 0 rgba(2,6,23,.04)}
+  .row{display:grid;grid-template-columns:1fr;gap:14px}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .muted{color:var(--muted)}
+  .pill{border:1px solid #e2e8f0;border-radius:999px;padding:2px 8px;background:#f1f5f9;font-size:12px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px}
+  .viewer{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff}
+  .viewer-head{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+  input[type="url"],input[type="file"]{padding:8px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
+  input[type="url"]{min-width:260px;flex:1}
+  iframe{width:100%;height:70vh;border:0}
+  textarea{width:100%;min-height:120px;padding:12px;border:1px solid #cbd5e1;border-radius:12px;background:#fff}
+  .grid2{display:grid;grid-template-columns:1fr;gap:12px}
+  @media (min-width:880px){.grid2{grid-template-columns:1fr 1fr}}
+  footer{color:var(--muted);padding:24px 0;text-align:center}
+</style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <h1>Evaluación de Calidad de Software — <span class="pill">Plantillas oficiales</span></h1>
-    <p class="sub">Aplicación de McCall, Boehm y FURPS con escala <strong>1–4</strong> y ponderaciones sobre <strong>100 puntos</strong> por modelo.</p>
-    <nav>
-      <a href="#descripcion">Descripción</a>
-      <a href="#ficha-red">Ficha del RED</a>
-      <a href="#mccall">McCall</a>
-      <a href="#boehm">Boehm</a>
-      <a href="#furps">FURPS</a>
-      <a href="#resultados">Resultados</a>
-      <a href="#conclusiones">Conclusiones</a>
-    </nav>
+    <h1>Matific — Evaluación de Calidad</h1>
+    <p class="sub">Botón + visor del PDF de la evaluación y espacio de <strong>conclusiones</strong> por modelo (McCall, Boehm, FURPS).</p>
+    <div class="toolbar">
+      <button class="btn" id="btnExport">Exportar conclusiones (.json)</button>
+      <label class="btn">
+        Importar conclusiones
+        <input id="importJson" type="file" accept="application/json" style="display:none">
+      </label>
+      <span class="pill muted">Sugerencia: sube <code>mccall.pdf</code>, <code>boehm.pdf</code> y <code>furps.pdf</code> al repositorio para que los botones los abran directo.</span>
+    </div>
   </div>
 </header>
 
 <main class="wrap">
-  <span id="descripcion" class="anchor-offset"></span>
-  <section>
-    <h2>1) Descripción y escala</h2>
-    <div class="grid">
-      <div class="col-6">
-        <div class="card">
-          <p>Evaluar un <strong>RED / App / Sitio</strong> siguiendo los cuestionarios del profesor. Escala de respuesta:</p>
-          <ul class="muted"><li><b>4</b> Excelente</li><li><b>3</b> Bueno</li><li><b>2</b> Regular</li><li><b>1</b> Malo</li></ul>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="note">
-          <strong>Fórmula</strong>
-          <div class="sep"></div>
-          <p class="mono">Puntaje de fila = (valor / 4) × Peso(pts).<br/>Puntaje del modelo = suma de filas (0–100).</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <span id="ficha-red" class="anchor-offset"></span>
-  <section>
-    <h2>2) Ficha del RED / Software</h2>
-    <div class="card">
-      <div class="grid">
-        <div class="col-6">
-          <label class="muted">Nombre</label>
-          <input placeholder="Ej.: Khan Academy – Geometría" />
-        </div>
-        <div class="col-6">
-          <label class="muted">URL / Repositorio</label>
-          <input placeholder="https://…" />
-        </div>
-        <div class="col-12">
-          <label class="muted">Descripción</label>
-          <textarea placeholder="Resumen funcional y técnico" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></textarea>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- McCall -->
-  <span id="mccall" class="anchor-offset"></span>
-  <section>
-    <div class="model-box">
-      <h2>3) Plantilla McCall</h2>
-      <div class="legend"><span><b>1</b>Malo</span><span><b>2</b>Regular</span><span><b>3</b>Bueno</span><span><b>4</b>Excelente</span></div>
+  <section id="sec-mccall">
+    <div class="row">
+      <div class="grid2">
+        <div>
+          <h2>McCall</h2>
+          <div class="toolbar">
+            <button class="btn primary" data-open="mccall">Abrir PDF McCall</button>
+            <button class="btn" data-toggle-viewer="mccall">Ver/Cargar aquí</button>
+          </div>
+          <p class="muted">Por defecto, el botón abre <code>mccall.pdf</code> desde la raíz del repo. También puedes pegar una URL o cargar un PDF local para previsualizarlo abajo.</p>
+        </div>
+        <div>
+          <h3>Conclusiones — McCall (Matific)</h3>
+          <textarea id="concl-mccall" placeholder="Escribe aquí las conclusiones del modelo McCall aplicadas a Matific..."></textarea>
+        </div>
+      </div>
+
+      <div id="viewer-mccall" class="viewer" hidden>
+        <div class="viewer-head">
+          <input type="url" placeholder="Pega URL del PDF (https://.../mccall.pdf)" data-url="mccall">
+          <input type="file" accept="application/pdf" data-file="mccall">
+          <button class="btn" data-load="mccall">Cargar</button>
+          <span class="muted">Si subes el archivo al repo con nombre <b>mccall.pdf</b>, el botón lo abrirá en nueva pestaña.</span>
+        </div>
+        <iframe data-frame="mccall"></iframe>
+      </div>
     </div>
-    <div class="toolbar">
-      <button class="btn" onclick="fillDefaults('mccall')">Rellenar ejemplo</button>
-      <button class="btn" onclick="clearModel('mccall')">Limpiar</button>
-    </div>
-    <div class="sep"></div>
-    <table>
-      <thead>
-        <tr><th>Factor (peso 10 c/u)</th><th>Pregunta</th><th style="width:110px">Peso</th><th style="width:140px">Puntaje (1–4)</th></tr>
-      </thead>
-      <tbody id="tbl-mccall">
-        <!-- Operación -->
-        <tr><td><strong>Corrección</strong></td><td>¿Las funciones implementadas reflejan los requisitos y objetivos educativos establecidos?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Confiabilidad</strong></td><td>¿La aplicación se comporta de forma estable y recupera ante errores?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Usabilidad</strong></td><td>¿La interfaz es consistente, accesible y fácil de aprender para el usuario objetivo?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Integridad</strong></td><td>¿Existen controles de acceso por rol y protección de datos personales?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <!-- Transición -->
-        <tr><td><strong>Portabilidad</strong></td><td>¿Funciona correctamente en diferentes navegadores/sistemas sin cambios?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Reusabilidad</strong></td><td>¿Se reutilizan componentes (tablas, formularios) reduciendo duplicación?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Interoperabilidad</strong></td><td>¿Integra o expone APIs con estándares comunes (SSO, exportación/importación)?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <!-- Revisión/Mantenimiento -->
-        <tr><td><strong>Mantenibilidad</strong></td><td>¿El código está modularizado, documentado y con pruebas que faciliten cambios?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Flexibilidad</strong></td><td>¿Se pueden agregar nuevas funciones con mínimo impacto?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Facilidad de Prueba</strong></td><td>¿Existen datos semilla y puntos claros para pruebas (unitarias/E2E)?</td><td><input type="number" value="10" step="0.1" data-model="mccall" data-weight></td><td><select data-model="mccall" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-      </tbody>
-      <tfoot><tr><td colspan="2">Puntaje total McCall (0–100)</td><td colspan="2" id="score-mccall" class="score">—</td></tr></tfoot>
-    </table>
   </section>
 
   <!-- Boehm -->
-  <span id="boehm" class="anchor-offset"></span>
-  <section>
-    <div class="model-box">
-      <h2>4) Plantilla Boehm</h2>
-      <div class="legend"><span><b>1</b>Malo</span><span><b>2</b>Regular</span><span><b>3</b>Bueno</span><span><b>4</b>Excelente</span></div>
+  <section id="sec-boehm">
+    <div class="row">
+      <div class="grid2">
+        <div>
+          <h2>Boehm</h2>
+          <div class="toolbar">
+            <button class="btn primary" data-open="boehm">Abrir PDF Boehm</button>
+            <button class="btn" data-toggle-viewer="boehm">Ver/Cargar aquí</button>
+          </div>
+          <p class="muted">Por defecto abre <code>boehm.pdf</code>. También puedes usar el visor para URL/archivo local.</p>
+        </div>
+        <div>
+          <h3>Conclusiones — Boehm (Matific)</h3>
+          <textarea id="concl-boehm" placeholder="Conclusiones del modelo Boehm para Matific..."></textarea>
+        </div>
+      </div>
+
+      <div id="viewer-boehm" class="viewer" hidden>
+        <div class="viewer-head">
+          <input type="url" placeholder="Pega URL del PDF (https://.../boehm.pdf)" data-url="boehm">
+          <input type="file" accept="application/pdf" data-file="boehm">
+          <button class="btn" data-load="boehm">Cargar</button>
+          <span class="muted">Para persistir en GitHub Pages, sube <b>boehm.pdf</b> al repositorio.</span>
+        </div>
+        <iframe data-frame="boehm"></iframe>
+      </div>
     </div>
-    <div class="toolbar">
-      <button class="btn" onclick="fillDefaults('boehm')">Rellenar ejemplo</button>
-      <button class="btn" onclick="clearModel('boehm')">Limpiar</button>
-    </div>
-    <div class="sep"></div>
-    <table>
-      <thead><tr><th>Característica</th><th>Pregunta</th><th style="width:110px">Peso</th><th style="width:140px">Puntaje (1–4)</th></tr></thead>
-      <tbody id="tbl-boehm">
-        <tr><td><strong>Portabilidad</strong></td><td>Independencia de dispositivo y auto-contenimiento del software.</td><td><input type="number" value="10" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Utilidad: Fiabilidad / Precisión / Completitud / Consistencia</strong></td><td>Resultados correctos, completos y consistentes con el currículo/objetivos.</td><td><input type="number" value="40" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Utilidad: Accesibilidad / Interactividad / Eficiencia</strong></td><td>Uso multi-dispositivo, facilidad de acceso y tiempos de respuesta.</td><td><input type="number" value="30" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Mantenibilidad</strong></td><td>Testabilidad, auto-descripción, estructuración, entendibilidad, concisión, legibilidad, modificabilidad, escalabilidad.</td><td><input type="number" value="20" step="0.1" data-model="boehm" data-weight></td><td><select data-model="boehm" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-      </tbody>
-      <tfoot><tr><td colspan="2">Puntaje total Boehm (0–100)</td><td colspan="2" id="score-boehm" class="score">—</td></tr></tfoot>
-    </table>
   </section>
 
   <!-- FURPS -->
-  <span id="furps" class="anchor-offset"></span>
-  <section>
-    <div class="model-box">
-      <h2>5) Plantilla FURPS</h2>
-      <div class="legend"><span><b>1</b>Malo</span><span><b>2</b>Regular</span><span><b>3</b>Bueno</span><span><b>4</b>Excelente</span></div>
-    </div>
-    <div class="toolbar">
-      <button class="btn" onclick="fillDefaults('furps')">Rellenar ejemplo</button>
-      <button class="btn" onclick="clearModel('furps')">Limpiar</button>
-    </div>
-    <div class="sep"></div>
-    <table>
-      <thead><tr><th>Dimensión</th><th>Pregunta</th><th style="width:110px">Peso</th><th style="width:140px">Puntaje (1–4)</th></tr></thead>
-      <tbody id="tbl-furps">
-        <tr><td><strong>Funcionalidad</strong></td><td>Características/capacidades, generalidad de funciones y seguridad.</td><td><input type="number" value="30" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Usabilidad</strong></td><td>Facilidad de uso, instalación, configuración, compatibilidad.</td><td><input type="number" value="20" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Confiabilidad</strong></td><td>Frecuencia/severidad de fallos, exactitud y predictibilidad.</td><td><input type="number" value="15" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Rendimiento</strong></td><td>Velocidad de procesamiento y tiempos de respuesta bajo carga.</td><td><input type="number" value="20" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-        <tr><td><strong>Soporte</strong></td><td>Mantenibilidad, configurabilidad, monitoreo y soporte técnico.</td><td><input type="number" value="15" step="0.1" data-model="furps" data-weight></td><td><select data-model="furps" data-score><option value="">—</option><option>1</option><option>2</option><option>3</option><option selected>4</option></select></td></tr>
-      </tbody>
-      <tfoot><tr><td colspan="2">Puntaje total FURPS (0–100)</td><td colspan="2" id="score-furps" class="score">—</td></tr></tfoot>
-    </table>
-  </section>
-
-  <!-- Resultados -->
-  <span id="resultados" class="anchor-offset"></span>
-  <section>
-    <h2>6) Resultados</h2>
-    <div class="grid">
-      <div class="col-6">
-        <div class="card">
-          <p class="muted">Totales por modelo (0–100)</p>
-          <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
-            <div><strong>McCall</strong><div id="out-mccall" class="score">—</div></div>
-            <div><strong>Boehm</strong><div id="out-boehm" class="score">—</div></div>
-            <div><strong>FURPS</strong><div id="out-furps" class="score">—</div></div>
-            <div><strong>Promedio Global</strong><div id="out-global" class="score">—</div></div>
+  <section id="sec-furps">
+    <div class="row">
+      <div class="grid2">
+        <div>
+          <h2>FURPS</h2>
+          <div class="toolbar">
+            <button class="btn primary" data-open="furps">Abrir PDF FURPS</button>
+            <button class="btn" data-toggle-viewer="furps">Ver/Cargar aquí</button>
           </div>
-          <div class="sep"></div>
-          <div id="badge-global" class="badge mid">Pendiente</div>
+          <p class="muted">Por defecto abre <code>furps.pdf</code>. Usa el visor para probar con un PDF local o un enlace.</p>
+        </div>
+        <div>
+          <h3>Conclusiones — FURPS (Matific)</h3>
+          <textarea id="concl-furps" placeholder="Conclusiones del modelo FURPS para Matific..."></textarea>
         </div>
       </div>
-      <div class="col-6">
-        <div class="card">
-          <h3>Interpretación</h3>
-          <p id="interp" class="muted">Diligencia cada modelo o usa “Rellenar ejemplo” y luego pulsa <span class="kbd">Calcular resultados</span>.</p>
+
+      <div id="viewer-furps" class="viewer" hidden>
+        <div class="viewer-head">
+          <input type="url" placeholder="Pega URL del PDF (https://.../furps.pdf)" data-url="furps">
+          <input type="file" accept="application/pdf" data-file="furps">
+          <button class="btn" data-load="furps">Cargar</button>
+          <span class="muted">Para que el botón funcione siempre, sube <b>furps.pdf</b> al repo.</span>
         </div>
+        <iframe data-frame="furps"></iframe>
       </div>
-    </div>
-    <div class="toolbar" style="margin-top:10px">
-      <button class="btn primary" onclick="calculateAll()">Calcular resultados</button>
-      <button class="btn" onclick="window.print()">Guardar como PDF</button>
     </div>
   </section>
 
-  <span id="conclusiones" class="anchor-offset"></span>
-  <section>
-    <h2>7) Conclusiones</h2>
-    <ul>
-      <li><strong>Adecuación general:</strong> Si el promedio ≥ 80%, apto para despliegue/piloto con mejoras puntuales.</li>
-      <li><strong>Riesgos:</strong> Priorizar ítems con puntaje bajo (≤ 60%).</li>
-      <li><strong>Mejoras sugeridas:</strong> automatizar pruebas, fortalecer seguridad, y monitoreo de rendimiento.</li>
-    </ul>
-  </section>
 </main>
 
-<footer class="wrap">
-  <div class="muted small">Universidad de La Guajira — Ingeniería de Sistemas — Evaluación de Calidad (McCall, Boehm, FURPS).</div>
+<footer>
+  <div class="wrap">
+    <small class="muted">Proyecto para publicación en GitHub Pages — Matific / McCall-Boehm-FURPS.</small>
+  </div>
 </footer>
 
 <script>
-  // ======= Cálculo: suma de Peso*(valor/4) → 0–100 =======
-  function computeModelScore(model){
-    const weights = Array.from(document.querySelectorAll(`[data-model="${model}"][data-weight]`));
-    const scores  = Array.from(document.querySelectorAll(`[data-model="${model}"][data-score]`));
-    let acc=0;
-    const N = Math.min(weights.length, scores.length);
-    for(let i=0;i<N;i++){
-      const w = parseFloat(weights[i].value||'0');
-      const s = parseFloat(scores[i].value||'0');
-      if(!isNaN(w) && !isNaN(s)) acc += w*(s/4);
-    }
-    return acc;
-  }
-  function fmt(v){ return isNaN(v)? '—' : (Math.round(v*10)/10).toFixed(1) }
-  function labelForPct(v){
-    if(isNaN(v)) return {text:'Pendiente', cls:'mid'}
-    if(v>=90) return {text:'Excelente', cls:'ok'}
-    if(v>=75) return {text:'Bueno', cls:'ok'}
-    if(v>=60) return {text:'Regular', cls:'mid'}
-    return {text:'Malo', cls:'bad'}
-  }
-  function calculateAll(){
-    const m = computeModelScore('mccall');
-    const b = computeModelScore('boehm');
-    const f = computeModelScore('furps');
-    document.getElementById('score-mccall').textContent = fmt(m);
-    document.getElementById('score-boehm').textContent  = fmt(b);
-    document.getElementById('score-furps').textContent  = fmt(f);
-    document.getElementById('out-mccall').textContent   = fmt(m);
-    document.getElementById('out-boehm').textContent    = fmt(b);
-    document.getElementById('out-furps').textContent    = fmt(f);
-    const vals = [m,b,f].filter(v=>!isNaN(v));
-    const g = vals.length? vals.reduce((a,c)=>a+c,0)/vals.length : NaN;
-    document.getElementById('out-global').textContent = fmt(g);
-    const badge = document.getElementById('badge-global');
-    const lab = labelForPct(g);
-    badge.textContent = isNaN(g)? 'Pendiente' : `${lab.text} (${fmt(g)}%)`;
-    badge.className = 'badge ' + lab.cls;
-    const interp = document.getElementById('interp');
-    if(!isNaN(g)){
-      let msg = 'Diagnóstico global: ' + lab.text + ' ('+fmt(g)+'%). ';
-      if(g>=80){ msg += 'Apto para despliegue/piloto con mejoras puntuales.' }
-      else if(g>=60){ msg += 'Requiere plan de mejoras antes de uso extensivo.' }
-      else { msg += 'No apto sin remediación significativa.' }
-      interp.textContent = msg;
-      interp.classList.remove('muted');
-    }
-  }
-  function clearModel(model){
-    document.querySelectorAll(`[data-model="${model}"][data-score]`).forEach(s=>s.value='');
-    calculateAll();
-  }
-  function fillDefaults(model){
-    const defaults = {
-      mccall:[4,4,4,4,4,4,4,3,3,3], // ejemplo
-      boehm:[4,4,4,4],
-      furps:[4,4,4,3,3]
-    };
-    const vals = defaults[model]; let i=0;
-    document.querySelectorAll(`[data-model="${model}"][data-score]`).forEach(s=>{
-      if(vals && typeof vals[i] !== 'undefined'){ s.value = String(vals[i]); } i++;
-    });
-    calculateAll();
-  }
-  document.addEventListener('change', e=>{
-    if(e.target.matches('[data-score],[data-weight]')) calculateAll();
+/* ---------- Abrir PDFs desde el repo ---------- */
+['mccall','boehm','furps'].forEach(key=>{
+  const btnOpen=document.querySelector(`[data-open="${key}"]`);
+  btnOpen.addEventListener('click', ()=>{
+    // Intenta abrir el PDF con ese nombre en la raíz del repo
+    window.open(`${key}.pdf`, '_blank');
   });
-  calculateAll();
+});
+
+/* ---------- Mostrar/Ocultar visor embebido ---------- */
+document.querySelectorAll('[data-toggle-viewer]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key=btn.getAttribute('data-toggle-viewer');
+    const box=document.getElementById(`viewer-${key}`);
+    box.hidden=!box.hidden;
+  });
+});
+
+/* ---------- Cargar en visor: desde URL o archivo local ---------- */
+['mccall','boehm','furps'].forEach(key=>{
+  const btnLoad=document.querySelector(`[data-load="${key}"]`);
+  const urlInput=document.querySelector(`[data-url="${key}"]`);
+  const fileInput=document.querySelector(`[data-file="${key}"]`);
+  const frame=document.querySelector(`[data-frame="${key}"]`);
+
+  btnLoad.addEventListener('click', ()=>{
+    const url=urlInput.value.trim();
+    if(url){
+      frame.src=url; // Mostrar PDF por URL
+      saveState(`pdfUrl_${key}`, url);
+      return;
+    }
+    if(fileInput.files && fileInput.files[0]){
+      const f=fileInput.files[0];
+      const blobURL=URL.createObjectURL(f);
+      frame.src=blobURL; // Vista local (no persiste en el repo)
+      return;
+    }
+    alert('Pega una URL de PDF o selecciona un archivo .pdf');
+  });
+});
+
+/* ---------- Conclusiones: guardar/recuperar en localStorage ---------- */
+const conclKeys=['mccall','boehm','furps'];
+function saveState(k,v){ try{ localStorage.setItem('matific_'+k, v) }catch(e){} }
+function loadState(k){ try{ return localStorage.getItem('matific_'+k) }catch(e){ return null } }
+
+conclKeys.forEach(k=>{
+  const ta=document.getElementById(`concl-${k}`);
+  // Cargar
+  const saved=loadState(`concl_${k}`);
+  if(saved) ta.value=saved;
+  // Escuchar cambios
+  ta.addEventListener('input', ()=> saveState(`concl_${k}`, ta.value));
+  // Restaurar URL de PDF si había
+  const savedUrl=loadState(`pdfUrl_${k}`);
+  if(savedUrl){
+    const frame=document.querySelector(`[data-frame="${k}"]`);
+    frame.src=savedUrl;
+    const box=document.getElementById(`viewer-${k}`);
+    box.hidden=false;
+    const urlInput=document.querySelector(`[data-url="${k}"]`);
+    if(urlInput) urlInput.value=savedUrl;
+  }
+});
+
+/* ---------- Exportar/Importar conclusiones ---------- */
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const data={
+    generatedAt:new Date().toISOString(),
+    mccall:document.getElementById('concl-mccall').value,
+    boehm:document.getElementById('concl-boehm').value,
+    furps:document.getElementById('concl-furps').value
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='conclusiones-matific.json';
+  a.click();
+});
+
+document.getElementById('importJson').addEventListener('change', (e)=>{
+  const file=e.target.files?.[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const obj=JSON.parse(reader.result);
+      if(typeof obj.mccall==='string') document.getElementById('concl-mccall').value=obj.mccall;
+      if(typeof obj.boehm==='string')  document.getElementById('concl-boehm').value=obj.boehm;
+      if(typeof obj.furps==='string')  document.getElementById('concl-furps').value=obj.furps;
+      ['mccall','boehm','furps'].forEach(k=>{
+        saveState(`concl_${k}`, document.getElementById(`concl-${k}`).value);
+      });
+      alert('Conclusiones importadas.');
+    }catch(err){ alert('Archivo inválido'); }
+  };
+  reader.readAsText(file);
+});
 </script>
 </body>
 </html>
