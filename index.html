@@ -17,13 +17,10 @@
     background:linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 45%, #ffffff 100%);
     min-height:100%;
   }
-
-  /* Header fijo eliminado: ahora es estático para que no "flote" */
   header{
     background:#ffffff;
     border-bottom:1px solid var(--border);
   }
-
   .wrap{max-width:1080px;margin:0 auto;padding:18px 20px}
   h1{margin:0 0 6px 0}
   .sub{color:var(--muted);margin:0 0 10px 0}
@@ -36,16 +33,13 @@
     margin:16px 0;
     box-shadow:0 1px 0 rgba(2,6,23,.04);
   }
-
   .row{display:grid;grid-template-columns:1fr;gap:14px}
-
   .btn{
     display:inline-flex;align-items:center;gap:8px;
     border:1px solid #cbd5e1;background:#fff;border-radius:10px;
     padding:10px 14px;font-weight:600;cursor:pointer
   }
   .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
-
   .toolbar{display:flex;flex-wrap:wrap;gap:8px}
   .viewer{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;margin-top:12px}
   .viewer-head{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px;border-bottom:1px solid var(--border);background:#f8fafc}
@@ -53,14 +47,14 @@
   input[type="url"]{min-width:260px;flex:1}
   iframe{width:100%;height:70vh;border:0}
 
-  textarea{
-    width:100%;min-height:120px;padding:12px;
-    border:1px solid #cbd5e1;border-radius:12px;background:#fff
+  .conclusion{
+    margin-top:14px;
+    padding:14px;
+    border:1px dashed var(--border);
+    border-radius:12px;
+    background:#f8fafc;
   }
-
-  .grid2{display:grid;grid-template-columns:1fr;gap:12px}
-  @media (min-width:880px){.grid2{grid-template-columns:1fr 1fr}}
-
+  .conclusion h3{margin-top:0}
   footer{color:var(--muted);padding:24px 0;text-align:center}
 </style>
 </head>
@@ -68,13 +62,7 @@
 <header>
   <div class="wrap">
     <h1>Matific — Evaluación de Calidad</h1>
-    <div class="toolbar">
-      <button class="btn" id="btnExport">Exportar conclusiones (.json)</button>
-      <label class="btn">
-        Importar conclusiones
-        <input id="importJson" type="file" accept="application/json" style="display:none">
-      </label>
-    </div>
+    <p class="sub">Visor del PDF de la evaluación y <strong>conclusiones</strong> por modelo (McCall, Boehm, FURPS).</p>
   </div>
 </header>
 
@@ -83,27 +71,35 @@
   <!-- McCall -->
   <section id="sec-mccall">
     <div class="row">
-      <div class="grid2">
-        <div>
-          <h2>McCall</h2>
-          <div class="toolbar">
-            <button class="btn primary" data-open="mccall">Ver detalles</button>
-            <button class="btn" data-toggle-viewer="mccall">Ver/Cargar aquí</button>
-          </div>
+      <div>
+        <h2>McCall</h2>
+        <div class="toolbar">
+          <button class="btn primary" data-open="mccall">Ver detalles</button>
+          <button class="btn" data-toggle-viewer="mccall">Ver/Cargar aquí</button>
         </div>
-        <div>
-          <h3>Conclusiones — McCall (Matific)</h3>
-          <textarea id="concl-mccall" placeholder="Escribe las conclusiones de McCall..."></textarea>
-        </div>
-      </div>
 
-      <div id="viewer-mccall" class="viewer" hidden>
-        <div class="viewer-head">
-          <input type="url" placeholder="Pega URL del PDF (https://.../mccall.pdf)" data-url="mccall">
-          <input type="file" accept="application/pdf" data-file="mccall">
-          <button class="btn" data-load="mccall">Cargar</button>
+        <div id="viewer-mccall" class="viewer" hidden>
+          <div class="viewer-head">
+            <input type="url" placeholder="Pega URL del PDF (https://.../mccall.pdf)" data-url="mccall">
+            <input type="file" accept="application/pdf" data-file="mccall">
+            <button class="btn" data-load="mccall">Cargar</button>
+          </div>
+          <iframe data-frame="mccall"></iframe>
         </div>
-        <iframe data-frame="mccall"></iframe>
+
+        <div class="conclusion">
+          <h3>Conclusión — McCall (Matific)</h3>
+          <p>
+            Al evaluar la plataforma Matific mediante el modelo de McCall, se concluye que es un
+            recurso educativo digital con un nivel de calidad alto, alcanzando un puntaje global de
+            <strong>84,6/100</strong>. Sus fortalezas se evidencian en la operación, donde presenta altos
+            niveles de corrección, confiabilidad, usabilidad y seguridad, lo que garantiza un entorno
+            estable y confiable para el aprendizaje. No obstante, se identifican áreas de mejora en las
+            capacidades de transición y revisión, particularmente en portabilidad, flexibilidad y
+            facilidad de prueba; aspectos que, de ser optimizados, permitirán incrementar su
+            adaptabilidad, sostenibilidad y proyección a largo plazo.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -111,27 +107,34 @@
   <!-- Boehm -->
   <section id="sec-boehm">
     <div class="row">
-      <div class="grid2">
-        <div>
-          <h2>Boehm</h2>
-          <div class="toolbar">
-            <button class="btn primary" data-open="boehm">Ver detalles</button>
-            <button class="btn" data-toggle-viewer="boehm">Ver/Cargar aquí</button>
-          </div>
+      <div>
+        <h2>Boehm</h2>
+        <div class="toolbar">
+          <button class="btn primary" data-open="boehm">Ver detalles</button>
+          <button class="btn" data-toggle-viewer="boehm">Ver/Cargar aquí</button>
         </div>
-        <div>
-          <h3>Conclusiones — Boehm (Matific)</h3>
-          <textarea id="concl-boehm" placeholder="Escribe las conclusiones de Boehm..."></textarea>
-        </div>
-      </div>
 
-      <div id="viewer-boehm" class="viewer" hidden>
-        <div class="viewer-head">
-          <input type="url" placeholder="Pega URL del PDF (https://.../boehm.pdf)" data-url="boehm">
-          <input type="file" accept="application/pdf" data-file="boehm">
-          <button class="btn" data-load="boehm">Cargar</button>
+        <div id="viewer-boehm" class="viewer" hidden>
+          <div class="viewer-head">
+            <input type="url" placeholder="Pega URL del PDF (https://.../boehm.pdf)" data-url="boehm">
+            <input type="file" accept="application/pdf" data-file="boehm">
+            <button class="btn" data-load="boehm">Cargar</button>
+          </div>
+          <iframe data-frame="boehm"></iframe>
         </div>
-        <iframe data-frame="boehm"></iframe>
+
+        <div class="conclusion">
+          <h3>Conclusión — Boehm (Matific)</h3>
+          <p>
+            La aplicación del modelo de Boehm al RED Matific muestra que la plataforma alcanza un
+            alto nivel de calidad (<strong>96,35/100</strong>), destacando en completitud, interactividad,
+            comunicación y escalabilidad. Sin embargo, presenta debilidades en uso offline,
+            alineación curricular, seguimiento del aprendizaje y claridad en guías de uso. En general,
+            Matific es una herramienta educativa digital robusta y útil, aunque requiere mejoras en
+            accesibilidad, documentación y consistencia curricular para consolidarse como una
+            solución de excelencia.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -139,27 +142,32 @@
   <!-- FURPS -->
   <section id="sec-furps">
     <div class="row">
-      <div class="grid2">
-        <div>
-          <h2>FURPS</h2>
-          <div class="toolbar">
-            <button class="btn primary" data-open="furps">Ver detalles</button>
-            <button class="btn" data-toggle-viewer="furps">Ver/Cargar aquí</button>
-          </div>
+      <div>
+        <h2>FURPS</h2>
+        <div class="toolbar">
+          <button class="btn primary" data-open="furps">Ver detalles</button>
+          <button class="btn" data-toggle-viewer="furps">Ver/Cargar aquí</button>
         </div>
-        <div>
-          <h3>Conclusiones — FURPS (Matific)</h3>
-          <textarea id="concl-furps" placeholder="Escribe las conclusiones de FURPS..."></textarea>
-        </div>
-      </div>
 
-      <div id="viewer-furps" class="viewer" hidden>
-        <div class="viewer-head">
-          <input type="url" placeholder="Pega URL del PDF (https://.../furps.pdf)" data-url="furps">
-          <input type="file" accept="application/pdf" data-file="furps">
-          <button class="btn" data-load="furps">Cargar</button>
+        <div id="viewer-furps" class="viewer" hidden>
+          <div class="viewer-head">
+            <input type="url" placeholder="Pega URL del PDF (https://.../furps.pdf)" data-url="furps">
+            <input type="file" accept="application/pdf" data-file="furps">
+            <button class="btn" data-load="furps">Cargar</button>
+          </div>
+          <iframe data-frame="furps"></iframe>
         </div>
-        <iframe data-frame="furps"></iframe>
+
+        <div class="conclusion">
+          <h3>Conclusión — FURPS (Matific)</h3>
+          <p>
+            Al evaluar la plataforma Matific mediante el modelo FURPS, considero que se trata de un
+            recurso educativo digital con un nivel de calidad muy alto, ya que alcanzó un puntaje
+            global de <strong>96,9/100</strong>. En cuanto a la <em>funcionalidad</em>, ofrece una amplia
+            cobertura curricular y diversos recursos interactivos que se ajustan tanto a docentes como
+            a estudiantes y padres, garantizando además seguridad en el manejo de la información.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -173,7 +181,7 @@
 </footer>
 
 <script>
-/* ---------- Abrir PDFs desde el repo ---------- */
+/* ---------- Abrir PDFs desde el repo en nueva pestaña ---------- */
 ['mccall','boehm','furps'].forEach(key=>{
   const btnOpen=document.querySelector(`[data-open="${key}"]`);
   if(btnOpen){
@@ -198,13 +206,12 @@ document.querySelectorAll('[data-toggle-viewer]').forEach(btn=>{
   const frame=document.querySelector(`[data-frame="${key}"]`);
   if(btnLoad){
     btnLoad.addEventListener('click', ()=>{
-      const url=urlInput.value.trim();
+      const url=(urlInput && urlInput.value.trim()) || '';
       if(url){
         frame.src=url;
-        saveState(`pdfUrl_${key}`, url);
         return;
       }
-      if(fileInput.files && fileInput.files[0]){
+      if(fileInput && fileInput.files && fileInput.files[0]){
         const f=fileInput.files[0];
         const blobURL=URL.createObjectURL(f);
         frame.src=blobURL; // vista local temporal
@@ -214,68 +221,6 @@ document.querySelectorAll('[data-toggle-viewer]').forEach(btn=>{
     });
   }
 });
-
-/* ---------- Conclusiones: guardar/recuperar en localStorage ---------- */
-const conclKeys=['mccall','boehm','furps'];
-function saveState(k,v){ try{ localStorage.setItem('matific_'+k, v) }catch(e){} }
-function loadState(k){ try{ return localStorage.getItem('matific_'+k) }catch(e){ return null } }
-
-conclKeys.forEach(k=>{
-  const ta=document.getElementById(`concl-${k}`);
-  if(!ta) return;
-  const saved=loadState(`concl_${k}`);
-  if(saved) ta.value=saved;
-  ta.addEventListener('input', ()=> saveState(`concl_${k}`, ta.value));
-  const savedUrl=loadState(`pdfUrl_${k}`);
-  if(savedUrl){
-    const frame=document.querySelector(`[data-frame="${k}"]`);
-    if(frame){ frame.src=savedUrl; }
-    const box=document.getElementById(`viewer-${k}`);
-    if(box){ box.hidden=false; }
-    const urlInput=document.querySelector(`[data-url="${k}"]`);
-    if(urlInput) urlInput.value=savedUrl;
-  }
-});
-
-/* ---------- Exportar/Importar conclusiones ---------- */
-const btnExport=document.getElementById('btnExport');
-if(btnExport){
-  btnExport.addEventListener('click', ()=>{
-    const data={
-      generatedAt:new Date().toISOString(),
-      mccall:document.getElementById('concl-mccall').value,
-      boehm:document.getElementById('concl-boehm').value,
-      furps:document.getElementById('concl-furps').value
-    };
-    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='conclusiones-matific.json';
-    a.click();
-  });
-}
-
-const importJson=document.getElementById('importJson');
-if(importJson){
-  importJson.addEventListener('change', (e)=>{
-    const file=e.target.files?.[0];
-    if(!file) return;
-    const reader=new FileReader();
-    reader.onload=()=>{
-      try{
-        const obj=JSON.parse(reader.result);
-        if(typeof obj.mccall==='string') document.getElementById('concl-mccall').value=obj.mccall;
-        if(typeof obj.boehm==='string')  document.getElementById('concl-boehm').value=obj.boehm;
-        if(typeof obj.furps==='string')  document.getElementById('concl-furps').value=obj.furps;
-        ['mccall','boehm','furps'].forEach(k=>{
-          saveState(`concl_${k}`, document.getElementById(`concl-${k}`).value);
-        });
-        alert('Conclusiones importadas.');
-      }catch(err){ alert('Archivo inválido'); }
-    };
-    reader.readAsText(file);
-  });
-}
 </script>
 </body>
 </html>
